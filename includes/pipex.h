@@ -6,7 +6,7 @@
 /*   By: selevray <selevray@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 23:10:55 by selevray          #+#    #+#             */
-/*   Updated: 2026/01/21 14:41:22 by selevray         ###   ########.fr       */
+/*   Updated: 2026/01/21 16:36:03 by selevray         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,14 @@ typedef struct s_gnl
 void		exec_cmd(char *cmd, char **envp);
 void		child_process(char *cmd, char **envp, int fd_in, int *pipefd);
 void		run_process(char *cmd, char **envp, int *fd_in);
-pid_t		last_process(char *cmd, char **envp, int fd_in, int argc,
-				char **argv);
+pid_t		last_process(char *cmd, char **envp, int fd_in, char **argv);
+
 int			wait_all(pid_t last_pid);
 
 char		*find_path_env(char **envp);
 char		*get_path_cmd(char *cmd, char **envp);
+int			get_word_len(char const *s, int i);
+void		fill_word(char *word, char const *s, int i, int len);
 char		**ft_split_args(char const *s);
 
 int			here_doc(char *limiter);

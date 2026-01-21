@@ -6,7 +6,7 @@
 /*   By: selevray <selevray@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 13:18:06 by selevray          #+#    #+#             */
-/*   Updated: 2026/01/21 14:12:23 by selevray         ###   ########.fr       */
+/*   Updated: 2026/01/21 16:37:01 by selevray         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ int	wait_all(pid_t last_pid)
 		exit_code = 127;
 	return (exit_code);
 }
-
-#include "pipex.h"
 
 static int	open_files(int argc, char **argv, int *i, int *fd_in)
 {
@@ -93,7 +91,7 @@ int	main(int argc, char **argv, char **envp)
 		run_process(argv[i], envp, &fd_in);
 		i++;
 	}
-	last_pid = last_process(argv[argc - 2], envp, fd_in, argc, argv);
+	last_pid = last_process(argv[argc - 2], envp, fd_in, argv);
 	if (fd_in != -1)
 		close(fd_in);
 	return (wait_all(last_pid));

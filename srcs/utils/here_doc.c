@@ -6,7 +6,7 @@
 /*   By: selevray <selevray@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 13:08:48 by selevray          #+#    #+#             */
-/*   Updated: 2026/01/21 15:53:01 by selevray         ###   ########.fr       */
+/*   Updated: 2026/01/21 16:42:40 by selevray         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,17 @@
 static void	read_input(char *limiter, int *fd)
 {
 	char	*line;
+	char	*error;
 
 	close(fd[0]);
+	error = "\nbash: warning: here-document delimited by end-of-file (wanted '";
 	while (1)
 	{
+		write(1, "> ", 2);
 		line = get_next_line(0);
 		if (!line)
 		{
-			ft_putstr_fd("\nbash: warning: here-document delimited by end-of-file (wanted '", 2);
+			ft_putstr_fd(error, 2);
 			ft_putstr_fd(limiter, 2);
 			ft_putendl_fd("')", 2);
 			exit(0);
@@ -37,10 +40,11 @@ static void	read_input(char *limiter, int *fd)
 		free(line);
 	}
 }
+
 int	here_doc(char *limiter)
 {
-	pid_t pid;
-	int fd[2];
+	pid_t	pid;
+	int		fd[2];
 
 	if (pipe(fd) == -1)
 		exit(1);
@@ -49,7 +53,6 @@ int	here_doc(char *limiter)
 		exit(1);
 	if (pid == 0)
 		read_input(limiter, fd);
-
 	close(fd[1]);
 	wait(NULL);
 	return (fd[0]);

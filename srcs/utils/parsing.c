@@ -6,7 +6,7 @@
 /*   By: selevray <selevray@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 23:11:43 by selevray          #+#    #+#             */
-/*   Updated: 2026/01/21 11:54:59 by selevray         ###   ########.fr       */
+/*   Updated: 2026/01/21 16:21:33 by selevray         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,46 +28,72 @@ char	*find_path_env(char **envp)
 	return (NULL);
 }
 
-char	*get_path_cmd(char *cmd, char **envp)
+static void	free_paths(char **paths)
 {
-	char	*path_env;
-	char	**paths;
+	int	i;
+
+	i = 0;
+	if (!paths)
+		return ;
+	while (paths[i])
+	{
+		free(paths[i]);
+		i++;
+	}
+	free(paths);
+}
+
+static char	*build_path(char *dir, char *cmd)
+{
+	char	*full_path;
+
+	full_path = malloc(ft_strlen(dir) + ft_strlen(cmd) + 2);
+	if (!full_path)
+		return (NULL);
+	ft_strcpy(full_path, dir);
+	ft_strcat(full_path, "/");
+	ft_strcat(full_path, cmd);
+	return (full_path);
+}
+
+static char	*find_valid_path(char **paths, char *cmd)
+{
 	char	*full_path;
 	int		i;
+
+	i = 0;
+	while (paths[i])
+	{
+		full_path = build_path(paths[i], cmd);
+		if (!full_path)
+			return (NULL);
+		if (access(full_path, X_OK) == 0)
+			return (full_path);
+		free(full_path);
+		i++;
+	}
+	return (NULL);
+}
+
+char	*get_path_cmd(char *cmd, char **envp)
+{
+	char	**paths;
+	char	*path_env;
+	char	*final_path;
 
 	if (ft_strchr(cmd, '/'))
 	{
 		if (access(cmd, X_OK) == 0)
 			return (ft_strdup(cmd));
-		else
-			return (NULL);
+		return (NULL);
 	}
 	path_env = find_path_env(envp);
 	if (!path_env)
-		path_env = "/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin";
+		path_env = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin";
 	paths = ft_split(path_env, ':');
 	if (!paths)
 		return (NULL);
-	i = 0;
-	while (paths[i])
-	{
-		full_path = malloc(ft_strlen(paths[i]) + ft_strlen(cmd) + 2);
-		if (!full_path)
-		{
-			free_split(paths, i);
-			return (NULL);
-		}
-		ft_strcpy(full_path, paths[i]);
-		ft_strcat(full_path, "/");
-		ft_strcat(full_path, cmd);
-		if (access(full_path, X_OK) == 0)
-		{
-			free_split(paths, i + 1);
-			return (full_path);
-		}
-		free(full_path);
-		i++;
-	}
-	free_split(paths, i);
-	return (NULL);
+	final_path = find_valid_path(paths, cmd);
+	free_paths(paths);
+	return (final_path);
 }

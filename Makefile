@@ -6,7 +6,7 @@
 #    By: selevray <selevray@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/21 14:42:25 by selevray          #+#    #+#              #
-#    Updated: 2026/01/21 14:48:40 by selevray         ###   ########.fr        #
+#    Updated: 2026/01/21 16:29:00 by selevray         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ SRC_FILES   = main.c \
       		  utils/parsing.c \
 			  utils/split_args.c \
 			  utils/utils.c \
+			  utils/split_args_utils.c \
 
 OBJS        = $(addprefix $(OBJDIR)/, $(SRC_FILES:.c=.o))
 
