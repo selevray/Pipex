@@ -6,7 +6,7 @@
 #    By: selevray <selevray@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/21 14:42:25 by selevray          #+#    #+#              #
-#    Updated: 2026/01/21 16:29:00 by selevray         ###   ########.fr        #
+#    Updated: 2026/01/23 11:27:40 by selevray         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ INCLUDES    = -I./includes
 SRCDIR      = srcs
 OBJDIR      = objs
 INCDIR      = includes
+BNSDIR 		= bonus
 
 SRC_FILES   = main.c \
 			  exec/exec.c \
@@ -30,9 +31,23 @@ SRC_FILES   = main.c \
 			  utils/utils.c \
 			  utils/split_args_utils.c \
 
+BONUS_FILES = main_bonus.c \
+			  exec/exec_bonus.c \
+			  utils/ft_split_bonus.c \
+			  utils/get_next_line_bonus.c \
+			  utils/get_next_line_utils_bonus.c \
+			  utils/here_doc_bonus.c \
+			  utils/parsing_bonus.c \
+			  utils/split_args_bonus.c \
+			  utils/utils_bonus.c \
+			  utils/split_args_utils_bonus.c
+
 OBJS        = $(addprefix $(OBJDIR)/, $(SRC_FILES:.c=.o))
 
-HEADERS     = $(INCDIR)/pipex.h
+OBJS_BONUS  = $(addprefix $(OBJDIR)/bonus/, $(BONUS_FILES:.c=.o))
+
+HEADERS     = $(INCDIR)/pipex.h \
+			  $(BNSDIR)/includes/pipex_bonus.h
 
 all: $(NAME)
 
@@ -45,10 +60,14 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-bonus: $(NAME)
-	@echo "Création de l'exécutable $(NAME)..."
-	$(CC) $(CFLAGS) $(OBJS) -o pipex_bonus
+bonus: $(OBJS_BONUS)
+	@echo "Création de l'exécutable pipex_bonus..."
+	$(CC) $(CFLAGS) $(OBJS_BONUS) -o pipex_bonus
 	@echo "pipex_bonus compilé avec succès !"
+
+$(OBJDIR)/bonus/%.o: $(BNSDIR)/srcs/%.c $(HEADERS)
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(INCLUDES) -I./$(BNSDIR)/includes -c $< -o $@
 
 clean:
 	@echo "Nettoyage des objets..."
