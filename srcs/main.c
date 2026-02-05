@@ -6,7 +6,7 @@
 /*   By: selevray <selevray@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 13:18:06 by selevray          #+#    #+#             */
-/*   Updated: 2026/01/23 11:15:11 by selevray         ###   ########.fr       */
+/*   Updated: 2026/02/05 08:47:35 by selevray         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@ void	child_process(char *cmd, char **envp, int fd_in, int *pipefd)
 {
 	close(pipefd[0]);
 	if (fd_in == -1)
+	{
+		close(pipefd[1]);
 		exit(1);
+	}
 	dup2(fd_in, STDIN_FILENO);
 	dup2(pipefd[1], STDOUT_FILENO);
 	close(fd_in);
@@ -36,16 +39,24 @@ int	open_infile(char *file)
 
 int	wait_all(pid_t last_pid)
 {
-	int	status;
-	int	exit_code;
+	int		status;
+	int		exit_code;
+	pid_t	pid;
 
-	waitpid(last_pid, &status, 0);
-	while (wait(NULL) > 0)
-		;
-	if (WIFEXITED(status))
-		exit_code = WEXITSTATUS(status);
-	else
-		exit_code = 127;
+	exit_code = 0;
+	while (1)
+	{
+		pid = waitpid(-1, &status, 0);
+		if (pid == -1)
+			break ;
+		if (pid == last_pid)
+		{
+			if (WIFEXITED(status))
+				exit_code = WEXITSTATUS(status);
+			else
+				exit_code = 127;
+		}
+	}
 	return (exit_code);
 }
 

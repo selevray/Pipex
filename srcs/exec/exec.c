@@ -6,7 +6,7 @@
 /*   By: selevray <selevray@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 13:00:28 by selevray          #+#    #+#             */
-/*   Updated: 2026/01/21 16:35:11 by selevray         ###   ########.fr       */
+/*   Updated: 2026/02/05 09:00:24 by selevray         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,13 @@ void	exec_cmd(char *cmd, char **envp)
 	char	*path;
 
 	args = ft_split_args(cmd);
-	if (!args)
-		exit(1);
+	if (!args || !args[0] || args[0][0] == '\0')
+	{
+		if (args)
+			free_split(args, -1);
+		ft_putstr_fd("Command not found: \n", 2);
+		exit(127);
+	}
 	path = get_path_cmd(args[0], envp);
 	if (!path)
 	{
@@ -84,8 +89,12 @@ pid_t	last_process(char *cmd, char **envp, int fd_in, char **argv)
 	int		fd_out;
 
 	pid = fork();
+	if (pid == -1)
+		return (-1);
 	if (pid == 0)
 	{
+		if (fd_in == -1)
+			exit(1);
 		fd_out = get_outfile_fd(argv);
 		dup2(fd_in, STDIN_FILENO);
 		dup2(fd_out, STDOUT_FILENO);

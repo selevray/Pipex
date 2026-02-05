@@ -6,7 +6,7 @@
 /*   By: selevray <selevray@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:41:25 by bzeloxx           #+#    #+#             */
-/*   Updated: 2026/01/21 16:12:18 by selevray         ###   ########.fr       */
+/*   Updated: 2026/02/05 08:49:39 by selevray         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,24 @@ static char	*extract_word(char const *s, char c)
 
 void	free_split(char **split, int i)
 {
-	while (i > 0)
-		free(split[--i]);
+	int	j;
+
+	if (!split)
+		return ;
+	if (i == -1)
+	{
+		j = 0;
+		while (split[j])
+		{
+			free(split[j]);
+			j++;
+		}
+	}
+	else
+	{
+		while (i > 0)
+			free(split[--i]);
+	}
 	free(split);
 }
 
