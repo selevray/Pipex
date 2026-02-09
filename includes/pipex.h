@@ -6,7 +6,7 @@
 /*   By: selevray <selevray@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 23:10:55 by selevray          #+#    #+#             */
-/*   Updated: 2026/01/21 16:36:03 by selevray         ###   ########.fr       */
+/*   Updated: 2026/02/09 15:06:22 by selevray         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void		fill_word(char *word, char const *s, int i, int len);
 char		**ft_split_args(char const *s);
 
 int			here_doc(char *limiter);
+void		safe_write(int fd, const void *buf, size_t count);
 
 void		free_split(char **tab, int limit);
 size_t		ft_strlen(const char *s);

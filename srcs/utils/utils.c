@@ -6,7 +6,7 @@
 /*   By: selevray <selevray@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 11:21:55 by selevray          #+#    #+#             */
-/*   Updated: 2026/01/21 16:12:39 by selevray         ###   ########.fr       */
+/*   Updated: 2026/02/09 15:11:02 by selevray         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,10 @@ void	ft_putendl_fd(char *s, int fd)
 	{
 		while (*s)
 		{
-			write(fd, s, 1);
+			safe_write(fd, s, 1);
 			s++;
 		}
-		write(fd, "\n", 1);
+		safe_write(fd, "\n", 1);
 	}
 }
 
@@ -71,7 +71,7 @@ void	ft_putstr_fd(char *s, int fd)
 	{
 		while (*s)
 		{
-			write(fd, s, 1);
+			safe_write(fd, s, 1);
 			s++;
 		}
 	}

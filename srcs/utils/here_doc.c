@@ -6,11 +6,20 @@
 /*   By: selevray <selevray@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 13:08:48 by selevray          #+#    #+#             */
-/*   Updated: 2026/01/21 16:42:40 by selevray         ###   ########.fr       */
+/*   Updated: 2026/02/09 15:06:27 by selevray         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+void	safe_write(int fd, const void *buf, size_t count)
+{
+	if (write(fd, buf, count) == -1)
+	{
+		perror("write");
+		exit(1);
+	}
+}
 
 static void	read_input(char *limiter, int *fd)
 {
@@ -36,7 +45,7 @@ static void	read_input(char *limiter, int *fd)
 			free(line);
 			exit(0);
 		}
-		write(fd[1], line, ft_strlen(line));
+		safe_write(fd[1], line, ft_strlen(line));
 		free(line);
 	}
 }
