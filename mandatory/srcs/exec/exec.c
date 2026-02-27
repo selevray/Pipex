@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-void	exec_cmd(char *cmd, char **envp)
+int	exec_cmd(char *cmd, char **envp)
 {
 	char	**args;
 	char	*path;
@@ -23,7 +23,7 @@ void	exec_cmd(char *cmd, char **envp)
 		if (args)
 			free_split(args, -1);
 		ft_putstr_fd("Command not found: \n", 2);
-		exit(127);
+		return (127);
 	}
 	path = get_path_cmd(args[0], envp);
 	if (!path)
@@ -31,13 +31,13 @@ void	exec_cmd(char *cmd, char **envp)
 		ft_putstr_fd("Command not found: ", 2);
 		ft_putendl_fd(args[0], 2);
 		free_split(args, -1);
-		exit(127);
+		return (127);
 	}
 	execve(path, args, envp);
 	perror("Execve failed");
 	free(path);
 	free_split(args, -1);
-	exit(1);
+	return (1);
 }
 
 void	run_process(char *cmd, char **envp, int *fd_in)
@@ -64,17 +64,12 @@ void	run_process(char *cmd, char **envp, int *fd_in)
 static int	get_outfile_fd(char **argv)
 {
 	int	i;
-	int	flag;
 	int	fd;
 
 	i = 0;
 	while (argv[i])
 		i++;
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
-		flag = O_WRONLY | O_CREAT | O_APPEND;
-	else
-		flag = O_WRONLY | O_CREAT | O_TRUNC;
-	fd = open(argv[i - 1], flag, 0644);
+	fd = open(argv[i - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
 	{
 		perror(argv[i - 1]);
@@ -87,6 +82,7 @@ pid_t	last_process(char *cmd, char **envp, int fd_in, char **argv)
 {
 	pid_t	pid;
 	int		fd_out;
+	int		exit_code;
 
 	pid = fork();
 	if (pid == -1)
@@ -100,7 +96,10 @@ pid_t	last_process(char *cmd, char **envp, int fd_in, char **argv)
 		dup2(fd_out, STDOUT_FILENO);
 		close(fd_in);
 		close(fd_out);
-		exec_cmd(cmd, envp);
+		exit_code = exec_cmd(cmd, envp);
+		close(STDIN_FILENO);
+		close(STDOUT_FILENO);
+		exit(exit_code);
 	}
 	return (pid);
 }

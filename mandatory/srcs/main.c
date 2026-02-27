@@ -14,6 +14,8 @@
 
 void	child_process(char *cmd, char **envp, int fd_in, int *pipefd)
 {
+	int	exit_code;
+
 	close(pipefd[0]);
 	if (fd_in == -1)
 	{
@@ -24,7 +26,10 @@ void	child_process(char *cmd, char **envp, int fd_in, int *pipefd)
 	dup2(pipefd[1], STDOUT_FILENO);
 	close(fd_in);
 	close(pipefd[1]);
-	exec_cmd(cmd, envp);
+	exit_code = exec_cmd(cmd, envp);
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	exit(exit_code);
 }
 
 int	open_infile(char *file)
@@ -60,52 +65,27 @@ int	wait_all(pid_t last_pid)
 	return (exit_code);
 }
 
-static int	open_files(int argc, char **argv, int *i, int *fd_in)
-{
-	int	fd_out;
-
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
-	{
-		if (argc < 6)
-			exit(1);
-		*i = 3;
-		fd_out = open(argv[argc - 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
-		*fd_in = here_doc(argv[2]);
-	}
-	else
-	{
-		*i = 2;
-		fd_out = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		*fd_in = open(argv[1], O_RDONLY);
-		if (*fd_in < 0)
-			perror(argv[1]);
-	}
-	return (fd_out);
-}
-
 int	main(int argc, char **argv, char **envp)
 {
-	int		i;
 	int		fd_in;
 	int		fd_out;
 	pid_t	last_pid;
 
-	if (argc < 5)
+	if (argc != 5)
 	{
 		ft_putstr_fd("Usage: ./pipex infile cmd1 cmd2 outfile\n", 2);
 		return (1);
 	}
-	fd_out = open_files(argc, argv, &i, &fd_in);
+	fd_in = open(argv[1], O_RDONLY);
+	if (fd_in < 0)
+		perror(argv[1]);
+	fd_out = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd_out < 0)
-		perror(argv[argc - 1]);
+		perror(argv[4]);
 	else
 		close(fd_out);
-	while (i < argc - 2)
-	{
-		run_process(argv[i], envp, &fd_in);
-		i++;
-	}
-	last_pid = last_process(argv[argc - 2], envp, fd_in, argv);
+	run_process(argv[2], envp, &fd_in);
+	last_pid = last_process(argv[3], envp, fd_in, argv);
 	if (fd_in != -1)
 		close(fd_in);
 	return (wait_all(last_pid));

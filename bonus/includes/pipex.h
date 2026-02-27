@@ -37,7 +37,7 @@ typedef struct s_gnl
 	int		fd;
 }			t_gnl;
 
-void		exec_cmd(char *cmd, char **envp);
+int			exec_cmd(char *cmd, char **envp);
 void		child_process(char *cmd, char **envp, int fd_in, int *pipefd);
 void		run_process(char *cmd, char **envp, int *fd_in);
 pid_t		last_process(char *cmd, char **envp, int fd_in, char **argv);

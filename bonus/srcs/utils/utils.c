@@ -6,7 +6,7 @@
 /*   By: selevray <selevray@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 11:21:55 by selevray          #+#    #+#             */
-/*   Updated: 2026/02/09 15:11:02 by selevray         ###   ########.fr       */
+/*   Updated: 2026/02/26 21:32:22 by selevray         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,7 @@
 char	*ft_strcpy(char *dest, const char *src)
 {
 	while (*src)
-	{
-		*dest = *src;
-		dest++;
-		src++;
-	}
+		*dest++ = *src++;
 	*dest = '\0';
 	return (dest);
 }
